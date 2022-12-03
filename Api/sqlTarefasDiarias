@@ -1,0 +1,19 @@
+import pyodbc
+
+def listarTarefasDiarias():
+    
+    dados_conexao = (
+        "Driver={SQL Server};"
+        "Server=DESKTOP-2R15BM3\SQLEXPRESS;"
+        "Database=ToDoList_DB;"
+    )
+
+    conexao = pyodbc.connect(dados_conexao)
+
+    cursor = conexao.cursor()
+    comandoSQL = "SELECT ID_TAREFA, NOME_TAREFA FROM TB_TAREFAS WHERE TIPO_TAREFA = 'Diária' AND DATA_CRIACAO = 021222 AND TAREFA_CONCLUIDA = 0"
+    cursor.execute(comandoSQL)
+
+    resultado = cursor.fetchall()
+    print(resultado)
+    #return resultado

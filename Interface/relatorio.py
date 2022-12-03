@@ -1,0 +1,2 @@
+def iniciar():
+    print('relatório')
