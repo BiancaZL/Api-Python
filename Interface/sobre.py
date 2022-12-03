@@ -6,7 +6,12 @@ def iniciar():
 
         A aplicação desenvolvida é uma lista de tarefas, baseada
         no meu projeto de TCC: Protótipo de Software de Gestão de
-        Tempo com Gamificação.
+        Tempo com Gamificação. Seu objetivo é ajudar as pessoas a
+        cumprirem suas tarefas, motivando-as ainda mais por meio da
+        gamificação, presente nessa aplicação por meio dos rankings,
+        onde os usuários comparam seus desempenhos uns com os outros,
+        instigando-os a completarem suas tarefas,
+        aumentando sua produtividade.
 
         O programa possui algumas semelhanças nas funções em relação
         ao protótipo, como: 

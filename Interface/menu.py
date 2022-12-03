@@ -41,9 +41,3 @@ def iniciar():
          case 6:
             sobre.iniciar()
             menu = float(0)    
-         case 7:
-            #tarefasDiarias.iniciar()
-            menu = float(0)    
-         case 8:
-            #tarefasDiarias.iniciar()
-            menu = float(0)  

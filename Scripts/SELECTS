@@ -1,0 +1,66 @@
+SELECT * FROM TB_TAREFAS 
+
+-- Ver lista de tarefas diárias
+SELECT 
+	ID_TAREFA, 
+	NOME_TAREFA 
+FROM TB_TAREFAS 
+WHERE 
+	TIPO_TAREFA = 'Diária' 
+	AND DATA_CRIACAO = 021222 
+	AND TAREFA_CONCLUIDA = 0
+
+
+-- Ver lista de tarefas no inventário
+SELECT 
+        ID_TAREFA, 
+        NOME_TAREFA 
+FROM TB_TAREFAS 
+WHERE 
+        TIPO_TAREFA = 'Inventário' 
+        AND DATA_CRIACAO = 021222 
+        AND TAREFA_CONCLUIDA = 0
+
+
+-- Data de início da tarefa não-concluída mais antiga
+SELECT
+		DATA_CRIACAO,
+		NOME_TAREFA
+		
+FROM 	TB_TAREFAS		
+WHERE
+		NOME_USUARIO = 'Bianca'
+		AND TAREFA_CONCLUIDA = 0
+
+
+-- Total de tarefas NÃO CONCLUÍDAS
+SELECT
+		NVL(QTD_TAREFAS_CONCLUIDAS, 0)
+		
+FROM 	TB_USUARIOS		
+WHERE
+		NOME_USUARIO = 'Bianca'
+		AND TAREFA_CONCLUIDA = 0
+
+
+-- Total de tarefas CONCLUÍDAS
+SELECT
+		NOME_TAREFA
+		
+FROM 	TB_TAREFAS		
+WHERE
+		USUARIO = 'Bianca'
+		AND TAREFA_CONCLUIDA = 0
+		AND DATA_CONCLUSAO = 021222
+
+
+-- Total de tarefas concluídas (no dia/período escolhido)
+SELECT
+		NVL(QTD_TAREFAS_CONCLUIDAS, 0)
+		
+FROM 	TB_USUARIOS		
+WHERE
+		USUARIO = 'Bianca'
+		AND TAREFA_CONCLUIDA = 0
+		AND DATA_CONCLUSAO IN (021122,021222)
+

@@ -39,8 +39,8 @@ def iniciar():
 
     '''
     for tarefa in banco --
-        print(tarefa.json)
-         if(tarefa.notfound - vazio - =0):
+        print(tarefa)
+         if(tarefa.notfound):
             print('\nNão há tarefas!')
     '''    
 

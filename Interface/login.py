@@ -10,7 +10,7 @@ flag_login = 1
 
 def logar():
     input_usuario = str(input("\nDigite seu nome de usuário: ")) 
-      #CONFERE NO BANCO SE EXISTE O LOGIN
+     
     if(input_usuario == banco_usuario):   
         input_senha = str(input("\nDigite sua senha: "))   
 
@@ -23,7 +23,7 @@ def logar():
     else:
       print('\nUsuário não cadastrado no sistema.')
                  
-  #return usuario
+    #return usuario
 
 
 
