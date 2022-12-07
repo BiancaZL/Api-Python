@@ -13,7 +13,7 @@ VALUES(
 '1',
 'Fazer trabalho de Tópicos em Informática',
 'Diária',
-'021222', -- DD/MM/AAAA
+'021222', -- DDMMAA
 '0',
 0
 )
@@ -34,7 +34,7 @@ VALUES(
 '2',
 'Fazer tarefa de Inteligência artificial',
 'Inventário',
-'021222', -- DD/MM/AAAA
+'021222', -- DDMMAA
 '0',
 0
 )

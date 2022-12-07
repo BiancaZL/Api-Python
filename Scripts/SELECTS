@@ -1,57 +1,58 @@
 SELECT * FROM TB_TAREFAS 
 
--- Ver lista de tarefas diárias
+--/listarTarefasDiarias
 SELECT 
-	ID_TAREFA, 
-	NOME_TAREFA 
+    ID_TAREFA, 
+    NOME_TAREFA 
 FROM TB_TAREFAS 
 WHERE 
-	TIPO_TAREFA = 'Diária' 
-	AND DATA_CRIACAO = 021222 
-	AND TAREFA_CONCLUIDA = 0
+    TIPO_TAREFA = 'Diária' 
+    AND NOME_USUARIO = {}
+    AND DATA_CRIACAO = {}
+    AND TAREFA_CONCLUIDA = 0
 
 
--- Ver lista de tarefas no inventário
+--/listarIventarioTarefas
 SELECT 
         ID_TAREFA, 
         NOME_TAREFA 
 FROM TB_TAREFAS 
 WHERE 
         TIPO_TAREFA = 'Inventário' 
-        AND DATA_CRIACAO = 021222 
+        AND NOME_USUARIO = {}
+        AND DATA_CRIACAO = {}
         AND TAREFA_CONCLUIDA = 0
 
 
--- Data de início da tarefa não-concluída mais antiga
+-- Data de início da tarefa não-concluída mais antiga (????????)
 SELECT
 		DATA_CRIACAO,
 		NOME_TAREFA
 		
 FROM 	TB_TAREFAS		
 WHERE
-		NOME_USUARIO = 'Bianca'
+		NOME_USUARIO = 'BiancaZL'
 		AND TAREFA_CONCLUIDA = 0
 
 
 -- Total de tarefas NÃO CONCLUÍDAS
 SELECT
-		NVL(QTD_TAREFAS_CONCLUIDAS, 0)
+		COUNT(*)
 		
-FROM 	TB_USUARIOS		
+FROM 	TB_TAREFAS	
 WHERE
-		NOME_USUARIO = 'Bianca'
+		NOME_USUARIO = {}
 		AND TAREFA_CONCLUIDA = 0
 
 
 -- Total de tarefas CONCLUÍDAS
 SELECT
-		NOME_TAREFA
+		COUNT(*)
 		
-FROM 	TB_TAREFAS		
+FROM 	TB_TAREFAS	
 WHERE
-		USUARIO = 'Bianca'
-		AND TAREFA_CONCLUIDA = 0
-		AND DATA_CONCLUSAO = 021222
+		NOME_USUARIO = {}
+		AND TAREFA_CONCLUIDA = 1
 
 
 -- Total de tarefas concluídas (no dia/período escolhido)
@@ -60,7 +61,7 @@ SELECT
 		
 FROM 	TB_USUARIOS		
 WHERE
-		USUARIO = 'Bianca'
+		USUARIO = 'BiancaZL'
 		AND TAREFA_CONCLUIDA = 0
 		AND DATA_CONCLUSAO IN (021122,021222)
 

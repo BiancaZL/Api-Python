@@ -8,7 +8,6 @@ import tarefasDiarias
 def iniciar():
    menu = 1
 
-
    while menu != 0:
       menu = float(input("""
       \nMENU!\n
@@ -41,3 +40,5 @@ def iniciar():
          case 6:
             sobre.iniciar()
             menu = float(0)    
+
+iniciar()

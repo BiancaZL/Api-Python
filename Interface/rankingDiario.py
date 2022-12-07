@@ -1,16 +1,14 @@
 import requests
 
 def iniciar():
-    print('ranking diário')
-
     requisicao = requests.get('http://192.168.15.20:5000/rankingDiario')
-    print('requisicao')
-    print(requisicao)
-    print(requisicao.json())
 
-    teste = requisicao.json()
+    ranking = requisicao.json()
 
-    for linha in teste:
-        print(linha['usuario'])
-        print ('/t')
-        print(linha['tarefas_concluidas'])
+    print("\n**** Ranking dos usuários que mais completaram tarefas hoje! ****\n")
+
+    for linha in ranking:
+        print(f"\n\t{linha['usuario']}\t{linha['tarefas_concluidas']}\n")
+
+        
+        
