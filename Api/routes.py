@@ -258,42 +258,59 @@ def rankingDiario():
 
 
 #Relatório do usuário
-@app.route('/relatorio', methods=['GET'])
-def relatorio():
+@app.route('/relatorioTarefasConcluidas', methods=['GET'])
+def relatorioTarefasConcluidas():
     cursor = conexao.cursor()
     try:
 
-        usuario = request.args.to_dict()
+        parametros = request.args.to_dict()
 
         comandoSQL = f"""
                         SELECT 
-                                ID_TAREFA, 
-                                NOME_TAREFA 
+                                COUNT (*)
                         FROM TB_TAREFAS 
-                        WHERE 
-                                TIPO_TAREFA = 'Inventário' 
-                                AND NOME_USUARIO = {usuario.get("usuario")}
-                                AND DATA_CRIACAO = {dataDeHoje}
+                        WHERE                              
+                                NOME_USUARIO = {parametros.get("usuario")}
+                                AND DATA_CONCLUSAO = {dataDeHoje}
+                                AND TAREFA_CONCLUIDA = 1
+                        """
+        cursor.execute(comandoSQL)
+
+        resultado = cursor.fetchall()
+        res = {"qtd_tarefa": resultado}
+   
+    except Exception as erro:    
+        print(f'Erro no método relatorioTarefasConcluidas: {erro}')
+
+    cursor.close()
+    return jsonify(res)
+
+@app.route('/relatorioTarefasNaoConcluidas', methods=['GET'])
+def relatorioTarefasNaoConcluidas():
+    cursor = conexao.cursor()
+    try:
+
+        parametros = request.args.to_dict()
+
+        comandoSQL = f"""
+                        SELECT 
+                                COUNT (*)
+                        FROM TB_TAREFAS 
+                        WHERE                              
+                                NOME_USUARIO = {parametros.get("usuario")}
+                                AND DATA_CONCLUSAO = {dataDeHoje}
                                 AND TAREFA_CONCLUIDA = 0
                         """
         cursor.execute(comandoSQL)
 
         resultado = cursor.fetchall()
-        print("\nresultado: ", resultado)
-  
-        res = []
-
-        for linha in resultado:
-            res.append({"id_tarefa": linha[0], "nome_tarefa": linha[1]})
+        res = {"qtd_tarefa": resultado}
    
     except Exception as erro:    
-        print(f'Erro no método listar tarefas: {erro}')
+        print(f'Erro no método relatorioTarefasNaoConcluidas: {erro}')
 
     cursor.close()
-
     return jsonify(res)
-
-
 
 
 
