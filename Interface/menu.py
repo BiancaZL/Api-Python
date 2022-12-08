@@ -5,6 +5,7 @@ import relatorio
 import sobre
 import tarefasDiarias
 
+
 def iniciar():
    menu = 1
 
@@ -24,21 +25,17 @@ def iniciar():
       match menu:
          case 1:
             tarefasDiarias.iniciar()
-            menu = float(0)
          case 2:
             inventarioTarefas.iniciar()
-            menu = float(0)
          case 3:
-            rankingDiario.iniciar()
-            menu = float(0)
+            rankingDiario.iniciar()     
          case 4:
             rankingPersistencia.iniciar()
-            menu = float(0)           
          case 5:
-            relatorio.iniciar()
-            menu = float(0)    
+            relatorio.iniciar()               
          case 6:
-            sobre.iniciar()
-            menu = float(0)    
+            sobre.iniciar() 
+         case 0:
+            menu = 0.  
 
 iniciar()

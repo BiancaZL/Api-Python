@@ -19,9 +19,8 @@ dados_conexao = (
     "Database=ToDoList_DB;"
 )
 conexao = pyodbc.connect(dados_conexao)
-cursor = conexao.cursor()
 
-#################
+
 
 @app.route('/', methods=['GET']) #Rota padrão
 def start():
@@ -29,17 +28,12 @@ def start():
     return texto
 
 
-
-
-
-
-#######################################################################################
-
 #Selecionar tarefas do inventário
-@app.route('/listarIventarioTarefas', methods=['GET'])
+@app.route('/listarInventarioTarefas', methods=['GET'])
 def listarIventarioTarefas():
+    cursor = conexao.cursor()
     try:
-        usuario = request.args.get('usuario')
+        parametros = request.args.to_dict()
 
         comandoSQL = f"""
                         SELECT 
@@ -48,8 +42,8 @@ def listarIventarioTarefas():
                         FROM TB_TAREFAS 
                         WHERE 
                                 TIPO_TAREFA = 'Inventário' 
-                                AND NOME_USUARIO = {usuario}
-                                AND DATA_CRIACAO = '021222' --{dataDeHoje}
+                                AND NOME_USUARIO = {parametros.get("usuario")}
+                                AND DATA_CRIACAO = {dataDeHoje}
                                 AND TAREFA_CONCLUIDA = 0
                         """
         cursor.execute(comandoSQL)
@@ -69,13 +63,13 @@ def listarIventarioTarefas():
 
     return jsonify(res)
 
-
-
 #Selecionar tarefas diárias
 @app.route('/listarTarefasDiarias', methods=['GET'])
 def listarTarefas():
+    cursor = conexao.cursor()
     try:
-        usuario = request.args.get('usuario')
+        
+        parametros = request.args.to_dict()
 
         comandoSQL = f"""
                         SELECT 
@@ -84,9 +78,9 @@ def listarTarefas():
                         FROM TB_TAREFAS 
                         WHERE 
                             TIPO_TAREFA = 'Diária' 
-                            AND NOME_USUARIO = {usuario}
-                            AND DATA_CRIACAO = '051222' --{dataDeHoje}
-                            --AND TAREFA_CONCLUIDA = 0"""
+                            AND NOME_USUARIO = {parametros.get("usuario")}
+                            AND DATA_CRIACAO = {dataDeHoje}
+                            AND TAREFA_CONCLUIDA = 0"""
         cursor.execute(comandoSQL)
 
         resultado = cursor.fetchall()
@@ -105,18 +99,15 @@ def listarTarefas():
     return jsonify(res)
 
 
-
-
-#Inserir tarefa 
+#Inserir tarefa diária
 @app.route('/inserirTarefa', methods=['POST'])
 def inserirTarefa():
-    
-    usuario = request.args.get('usuario')
-    id_tarefa = request.args.get('id_tarefa')
-    tipo_tarefa = request.args.get('tipo_tarefa')
-    nome_tarefa = request.args.get('nomeTarefa')
+    cursor = conexao.cursor()
 
     try:
+        
+        parametros = request.args.to_dict()
+
         comandoSQL = f"""INSERT INTO TB_TAREFAS(
                             NOME_USUARIO,
                             ID_TAREFA, 
@@ -127,14 +118,14 @@ def inserirTarefa():
                             TAREFA_CONCLUIDA
                         )
                         VALUES(
-                        {usuario},
-                        {id_tarefa},
-                        {nome_tarefa},
-                        {tipo_tarefa},
+                        {parametros.get("usuario")},
+                        {parametros.get("id_tarefa")},
+                        {parametros.get("nome_tarefa")},                        
+                        {parametros.get("tipo_tarefa")},
                         {dataDeHoje}, 
                         '0',
                         0
-                        )"""#.format(usuario, id_tarefa, nome_tarefa, tipo_tarefa, dataDeHoje)
+                        )"""
         
         cursor.execute(comandoSQL)
 
@@ -147,102 +138,90 @@ def inserirTarefa():
         cursor.commit()
     
     cursor.close()
-        
     return jsonify(msg)
 
-
-
-#alterar tarefa
+#alterar tarefa diária
 @app.route('/alterarTarefa', methods=['PATCH'])
 def alterarTarefa():
 
-    usuario = request.args.get('usuario')
-    id_alteraTarefa = request.args.get('id_alteraTarefa')
-    nome_alteraTarefa = request.args.get('nome_alteraTarefa')
+    msg = {}
+    cursor = conexao.cursor()
 
     try:   
+        parametros = request.args.to_dict()
+
         comandoSQL = f"""UPDATE TB_TAREFAS
-                        SET NOME_TAREFA = {nome_alteraTarefa}
-                        WHERE ID_TAREFA = {id_alteraTarefa} AND NOME_USUARIO = {usuario} 
+                        SET NOME_TAREFA = {parametros.get("nome_alteraTarefa")}
+                        WHERE ID_TAREFA = {parametros.get("id_alteraTarefa")} AND NOME_USUARIO = {parametros.get("usuario")} 
                     """
         cursor.execute(comandoSQL)
 
     except Exception as erro:    
-        msg = "Erro no método alterarTarefa: ", erro
+        msg = {"mensagem":'Erro no método alterarTarefa: {}'.format(erro)}
         cursor.rollback()
         
     else:
-        msg = "Tarefa alterada com sucesso!"
+        msg = {"mensagem": 'Tarefa alterada com sucesso!'}
         cursor.commit()
     
     cursor.close()
-    
     return jsonify(msg)   
 
 
-#concluir tarefa
+#concluir tarefa diária
 @app.route('/concluirTarefa', methods=['PATCH'])
 def concluirTarefa():
-    try:   
-        
-        usuario = request.args.get('usuario')
-        id_concluiTarefa = request.args.get('id_tarefa')
+    cursor = conexao.cursor()
+    try:        
+        parametros = request.args.to_dict()
 
         comandoSQL = f"""UPDATE TB_TAREFAS
                          SET TAREFA_CONCLUIDA = 1, DATA_CONCLUSAO = {dataDeHoje}
-                         WHERE ID_TAREFA = {id_concluiTarefa} AND NOME_USUARIO = {usuario}  
+                         WHERE ID_TAREFA = {parametros.get("id_concluiTarefa")} AND NOME_USUARIO = {parametros.get("usuario")}  
                     """
-    
         cursor.execute(comandoSQL)
 
     except Exception as erro:    
-        msg = f"Erro no métodoConcluir tarefa {erro}"
+        msg = {"mensagem":'Erro no métodoConcluir tarefa: {}'.format(erro)}
         cursor.rollback()
     else:
-        msg = "Tarefa concluída com sucesso!"
+        msg = {"mensagem":'Tarefa concluída com sucesso!'}
         cursor.commit()
+
     cursor.close()
     return jsonify(msg)   
 
 
 
-#deletar tarefa
-@app.route('/concluirTarefa', methods=['DELETE'])
+#deletar tarefa diária
+@app.route('/deletarTarefa', methods=['DELETE'])
 def deletarTarefa():
+    cursor = conexao.cursor()
     try:   
-        usuario = request.args.get('usuario')   
-        id_deletaTarefa = request.args.get('id_deletaTarefa')
+        parametros = request.args.to_dict()
 
         comandoSQL = f"""DELETE FROM TB_TAREFAS
-                         WHERE ID_TAREFA = {id_deletaTarefa} AND NOME_USUARIO = {usuario} 
+                         WHERE ID_TAREFA = {parametros.get("id_deletaTarefa")} AND NOME_USUARIO = {parametros.get("usuario")} 
                     """
         cursor.execute(comandoSQL)
 
     except Exception as erro:    
-        msg = f"Erro no método deletar tarefa: {erro}"
+        msg = {"mensagem":'Erro no método deletar tarefa:: {}'.format(erro)}
         cursor.rollback()
     
     else:
-        msg = "Tarefa deletada com sucesso!"
+        msg = {"mensagem":'Tarefa deletada com sucesso!'}
         cursor.commit()
     
     cursor.close()
-
     return jsonify(msg) 
 
-
-
-
-
-
-
-#######################################################################################
 
 #Ranking dos usuários que mais completaram tarefas diárias
 @app.route('/rankingDiario', methods=['GET'])
 def rankingDiario():
+    cursor = conexao.cursor()
     try:
-          
         comandoSQL = f"""
                         SELECT TOP 10 
                                     U.NOME_USUARIO,
@@ -254,12 +233,12 @@ def rankingDiario():
                         ON U.NOME_USUARIO = T.NOME_USUARIO
             
                         WHERE
-                                    TIPO_TAREFA = 'Diária'
-                                    AND TAREFA_CONCLUIDA = 1
-                                    AND DATA_CONCLUSAO = {'051222'}
+                                    T.TIPO_TAREFA = 'Diária'
+                                    AND T.TAREFA_CONCLUIDA = 1
+                                    AND T.DATA_CONCLUSAO = {dataDeHoje}
                                     AND U.QTD_TAREFAS_CONCLUIDAS >= 5
                 
-                        ORDER BY QTD_TAREFAS_CONCLUIDAS DESC"""#.format('051222')
+                        ORDER BY QTD_TAREFAS_CONCLUIDAS DESC"""
         cursor.execute(comandoSQL)
 
         resultado = cursor.fetchall()
@@ -277,13 +256,14 @@ def rankingDiario():
 
     return jsonify(res)
 
-#######################################################################################
+
 #Relatório do usuário
-#Selecionar tarefas do inventário
 @app.route('/relatorio', methods=['GET'])
 def relatorio():
+    cursor = conexao.cursor()
     try:
-        usuario = request.args.get('usuario')
+
+        usuario = request.args.to_dict()
 
         comandoSQL = f"""
                         SELECT 
@@ -292,8 +272,8 @@ def relatorio():
                         FROM TB_TAREFAS 
                         WHERE 
                                 TIPO_TAREFA = 'Inventário' 
-                                AND NOME_USUARIO = {usuario}
-                                AND DATA_CRIACAO = '021222' --{dataDeHoje}
+                                AND NOME_USUARIO = {usuario.get("usuario")}
+                                AND DATA_CRIACAO = {dataDeHoje}
                                 AND TAREFA_CONCLUIDA = 0
                         """
         cursor.execute(comandoSQL)
@@ -322,6 +302,4 @@ def relatorio():
 
 
 ############
-
 app.run(host='0.0.0.0',debug=True)
-
