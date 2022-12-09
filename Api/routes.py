@@ -28,6 +28,65 @@ def start():
     return texto
 
 
+
+@app.route('/cadastrarUsuario', methods=['POST'])
+def cadastrarUsuario():
+
+    cursor = conexao.cursor()
+    try:
+        parametros = request.args.to_dict()
+
+        comandoSQL = f"""
+                        INSERT INTO TB_USUARIOS(
+                            NOME_USUARIO,
+                            SENHA
+                        )
+                        VALUES(
+                        {parametros.get("usuario")},		     
+                        {parametros.get("senha")}			     				     
+                        )
+                    """
+        cursor.execute(comandoSQL)
+
+    except Exception as erro:    
+        msg = {"mensagem":'Erro no cadastrarUsuario: {}'.format(erro)}
+        cursor.rollback()
+    else:
+        msg = {"mensagem":'Usuário criado com sucesso!'}
+        cursor.commit()
+
+    cursor.close()
+    return jsonify(msg)
+
+
+
+# Procura o usuário no banco para fazer o login
+@app.route('/buscarUsuario', methods=['GET'])
+def buscarUsuario():
+    cursor = conexao.cursor()
+    try:
+        parametros = request.args.to_dict()
+        comandoSQL = f"""
+                        SELECT
+                                NOME_USUARIO,
+                                SENHA
+                        FROM TB_USUARIOS
+                        WHERE	NOME_USUARIO = {parametros.get("usuario")}
+                                AND SENHA = {parametros.get("senha")}
+                        """
+        cursor.execute(comandoSQL)
+        resultado = cursor.fetchall()
+        print(resultado) 
+        res = {"usuario": resultado[0][0], "senha":resultado[0][1]}
+
+    except Exception as erro:    
+        print(f'Erro no método buscarUsuario: {erro}')
+        res = {"usuario":'Não encontrado', "senha": 'Não encontrada'}
+    cursor.close()
+    return jsonify(res)
+
+
+
 #Selecionar tarefas do inventário
 @app.route('/listarInventarioTarefas', methods=['GET'])
 def listarIventarioTarefas():
@@ -47,10 +106,8 @@ def listarIventarioTarefas():
                                 AND TAREFA_CONCLUIDA = 0
                         """
         cursor.execute(comandoSQL)
-
         resultado = cursor.fetchall()
-        print("\nresultado: ", resultado)
-  
+
         res = []
 
         for linha in resultado:
@@ -82,9 +139,7 @@ def listarTarefas():
                             AND DATA_CRIACAO = {dataDeHoje}
                             AND TAREFA_CONCLUIDA = 0"""
         cursor.execute(comandoSQL)
-
         resultado = cursor.fetchall()
-        print("\nresultado: ", resultado)
   
         res = []
 
@@ -240,9 +295,7 @@ def rankingDiario():
                 
                         ORDER BY QTD_TAREFAS_CONCLUIDAS DESC"""
         cursor.execute(comandoSQL)
-
         resultado = cursor.fetchall()
-        print("\nresultado: ", resultado)
   
         res = []
 
@@ -253,7 +306,6 @@ def rankingDiario():
         print(f'Erro no método ranking diário: {erro}')
 
     cursor.close()
-
     return jsonify(res)
 
 
@@ -277,13 +329,14 @@ def relatorioTarefasConcluidas():
         cursor.execute(comandoSQL)
 
         resultado = cursor.fetchall()
-        res = {"qtd_tarefa": resultado}
+        res = {"qtd_tarefaC": resultado[0][0]}
    
     except Exception as erro:    
-        print(f'Erro no método relatorioTarefasConcluidas: {erro}')
+        res = {"qtd_tarefaC":'Não encontrado'}
 
     cursor.close()
     return jsonify(res)
+
 
 @app.route('/relatorioTarefasNaoConcluidas', methods=['GET'])
 def relatorioTarefasNaoConcluidas():
@@ -304,10 +357,10 @@ def relatorioTarefasNaoConcluidas():
         cursor.execute(comandoSQL)
 
         resultado = cursor.fetchall()
-        res = {"qtd_tarefa": resultado}
+        res = {"qtd_tarefaN": resultado[0][0]}
    
     except Exception as erro:    
-        print(f'Erro no método relatorioTarefasNaoConcluidas: {erro}')
+        res = {"qtd_tarefaN":'Não encontrado'}
 
     cursor.close()
     return jsonify(res)

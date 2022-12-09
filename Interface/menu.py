@@ -4,6 +4,8 @@ import rankingPersistencia
 import relatorio
 import sobre
 import tarefasDiarias
+import exportar
+
 
 
 def iniciar():
@@ -19,6 +21,7 @@ def iniciar():
       [4] Ranking de Persistência \n
       [5] Relatório\n
       [6] Sobre\n 
+      [7] Exportar\n 
       [0] Voltar\n       
       """))
       
@@ -35,7 +38,8 @@ def iniciar():
             relatorio.iniciar()               
          case 6:
             sobre.iniciar() 
+         case 7:
+            exportar.iniciar()            
          case 0:
             menu = 0.  
 
-iniciar()

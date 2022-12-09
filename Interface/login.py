@@ -1,58 +1,65 @@
+import requests
 import menu
 
-input_usuario = ''
-input_senha = ''
-banco_usuario = 'Bianca'
-banco_senha = '123'
+def login():
+    print('\t\tLOGIN\n')
 
-flag_login = 1
+    input_usuario = str(input("\nDigite seu nome de usuário: "))
+    input_senha = str(input('\nDigite sua senha: ')) 
+    dicionario = {"usuario":input_usuario,"senha":input_senha}
+    
+    requisicao = requests.get(f"http://192.168.15.20:5000/buscarUsuario?usuario='{dicionario['usuario']}'&senha='{dicionario['senha']}'")
+    credenciais = requisicao.json()
 
-
-def logar():
-    input_usuario = str(input("\nDigite seu nome de usuário: ")) 
-     
-    if(input_usuario == banco_usuario):   
-        input_senha = str(input("\nDigite sua senha: "))   
-
-        if(input_senha == banco_senha):
-          print('\nUsuário autenticado. Bem vindo!')
+    if(input_usuario == credenciais['usuario']):   
+          
+        if(input_senha == credenciais['senha']):
+          print("\nBem vindo ao ToDoList!")
           menu.iniciar()
-
+          
         else:
           print('\nO login e a senha não coincidem. Tente novamente.')
     else:
       print('\nUsuário não cadastrado no sistema.')
-                 
-    #return usuario
 
 
+def cadastro():
+    print('\t\tCADASTRO NO SISTEMA\n')
 
+    usuario = str(input('\nInsira um nome de usuário: '))
+    senha = str(input('\nDigite uma senha: '))
+    dicionario = {"usuario":usuario,"senha":senha}
 
-while flag_login != 0:
-
-  flag_login = float(input("""
-  ******************
-  \t\tLOGIN\n
-
-  [1] Fazer Login \n  
-  [2] Cadastro \n  
-  [0] Sair do Sitema\n
+    requisicao = requests.post(f"http://192.168.15.20:5000/cadastrarUsuario?usuario='{dicionario['usuario']}'&senha='{dicionario['senha']}'")
+    mensagem = requisicao.json()
+    
+    print(f"\n{mensagem['mensagem']}")
+              
   
-  ******************
-  """))
-  
+def iniciar():
+  flag_login = 1
 
-  match flag_login:
-      case 1:
-        logar()
-        #flag_login = float(0)
-      case 2:
-        print('\nCadastro')
-        flag_login = float(0)
-      case 0:
-        print('\nSaindo do sistema...')
-        flag_login = float(0)
+  while flag_login != 0:
 
+    flag_login = float(input("""
+    ******************
+    \tLOGIN\n
 
+    [1] Fazer Login \n  
+    [2] Cadastro \n  
+    [0] Sair do Sitema\n
+    
+    ******************
+    """))
+    
 
+    match flag_login:
+        case 1:
+          login()     
+        case 2:
+          cadastro()
+        case 0:
+          print('\nSaindo do sistema...')
+          flag_login = float(0)
 
+iniciar()
